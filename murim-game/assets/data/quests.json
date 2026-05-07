@@ -1,0 +1,52 @@
+[
+  {
+    "id": "quest_000",
+    "title": "Bandit Slayer",
+    "description": "Defeat 4 rogue cultivators in the wild",
+    "giver_name": "Wu Zhen",
+    "objective": "defeat_enemies:4",
+    "reward_gold": 50,
+    "reward_xp": 100,
+    "min_realm": "Mortal"
+  },
+  {
+    "id": "quest_001",
+    "title": "Beast Hunter",
+    "description": "Slay 3 spirit beasts terrorizing travelers",
+    "giver_name": "Wu Shi",
+    "objective": "defeat_beasts:3",
+    "reward_gold": 80,
+    "reward_xp": 150,
+    "min_realm": "Qi Gathering"
+  },
+  {
+    "id": "quest_002",
+    "title": "Herb Gathering",
+    "description": "Collect 3 spirit herbs from the bamboo grove",
+    "giver_name": "Zhou Qing",
+    "objective": "collect_herbs:3",
+    "reward_gold": 30,
+    "reward_xp": 50,
+    "min_realm": "Mortal"
+  },
+  {
+    "id": "quest_003",
+    "title": "Sect Defender",
+    "description": "Protect the sect from 7 invaders",
+    "giver_name": "Wu Zhen",
+    "objective": "defend_sect:7",
+    "reward_gold": 120,
+    "reward_xp": 250,
+    "min_realm": "Foundation Establishment"
+  },
+  {
+    "id": "quest_004",
+    "title": "Secret Realm",
+    "description": "Find and explore the hidden cave in the mountains",
+    "giver_name": "Wu Zhen",
+    "objective": "explore:7",
+    "reward_gold": 200,
+    "reward_xp": 400,
+    "min_realm": "Core Formation"
+  }
+]

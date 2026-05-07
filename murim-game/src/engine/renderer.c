@@ -338,12 +338,32 @@ void renderer_draw_particles(const Game *game)
         const Particle *p = &game->particles[i];
         if (!p->active) continue;
 
+        /* Draw trail if enabled */
+        if (p->has_trail) {
+            for (int j = 0; j < 3; j++) {
+                int idx1 = (p->trail_index - 1 - j + 4) % 4;
+                int idx2 = (p->trail_index - 2 - j + 4) % 4;
+                Vec2 p1 = p->trail_positions[idx1];
+                Vec2 p2 = p->trail_positions[idx2];
+                if (p1.x != 0 && p2.x != 0) {
+                    Color trail_c = p->color;
+                    trail_c.a = (unsigned char)(trail_c.a * (1.0f - (j/3.0f)));
+                    DrawLineEx((Vector2){p1.x, p1.y}, (Vector2){p2.x, p2.y}, p->size, trail_c);
+                }
+            }
+        }
+
         float alpha_mult = p->life / p->max_life;
         Color c = p->color;
         c.a = (unsigned char)(c.a * alpha_mult);
-
         float size = p->size * alpha_mult;
-        DrawCircle((int)p->pos.x, (int)p->pos.y, size, c);
+
+        DrawRectanglePro(
+            (Rectangle){ p->pos.x, p->pos.y, size, size },
+            (Vector2){ size / 2, size / 2 },
+            p->rotation,
+            c
+        );
     }
 }
 

@@ -1,0 +1,3 @@
+/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles/murim_game.dir
+/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles/edit_cache.dir
+/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles/rebuild_cache.dir

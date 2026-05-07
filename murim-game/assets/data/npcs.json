@@ -1,0 +1,108 @@
+[
+  {
+    "name": "Grand Elder Ma Shi",
+    "type": "elder",
+    "x": 71.0,
+    "y": 51.0,
+    "realm": "Spirit Severing",
+    "realm_level": 5,
+    "dialogue": [
+      "Welcome to the Dragon Palm Pavilion.",
+      "Train hard, and you shall reach the pinnacle.",
+      "Our sect has stood for a thousand years."
+    ]
+  },
+  {
+    "name": "Huang Shi",
+    "type": "friendly",
+    "x": 70,
+    "y": 52,
+    "realm": "Qi Gathering",
+    "realm_level": 4,
+    "dialogue": [
+      "I'm training at the Dragon Palm Pavilion!"
+    ]
+  },
+  {
+    "name": "Liu Hao",
+    "type": "friendly",
+    "x": 70,
+    "y": 50,
+    "realm": "Foundation Establishment",
+    "realm_level": 5,
+    "dialogue": [
+      "I'm training at the Dragon Palm Pavilion!"
+    ]
+  },
+  {
+    "name": "Wu Zhen",
+    "type": "friendly",
+    "x": 73,
+    "y": 52,
+    "realm": "Qi Gathering",
+    "realm_level": 2,
+    "dialogue": [
+      "I'm training at the Dragon Palm Pavilion!"
+    ]
+  },
+  {
+    "name": "Sun Qing",
+    "type": "merchant",
+    "x": 92,
+    "y": 59,
+    "realm": "Foundation Establishment",
+    "realm_level": 7,
+    "dialogue": [
+      "I have wares for sale!",
+      "Spirit stones, fresh today!"
+    ]
+  },
+  {
+    "name": "Wu Shi",
+    "type": "hostile",
+    "x": 92,
+    "y": 97,
+    "realm": "Mortal",
+    "realm_level": 3,
+    "dialogue": []
+  },
+  {
+    "name": "Zhang Lei",
+    "type": "hostile",
+    "x": 69,
+    "y": 102,
+    "realm": "Qi Gathering",
+    "realm_level": 2,
+    "dialogue": []
+  },
+  {
+    "name": "Xu Lei",
+    "type": "hostile",
+    "x": 46,
+    "y": 67,
+    "realm": "Qi Gathering",
+    "realm_level": 1,
+    "dialogue": []
+  },
+  {
+    "name": "Liu Yun",
+    "type": "hostile",
+    "x": 67,
+    "y": 109,
+    "realm": "Core Formation",
+    "realm_level": 5,
+    "dialogue": []
+  },
+  {
+    "name": "Zhou Qing",
+    "type": "merchant",
+    "x": 101,
+    "y": 98,
+    "realm": "Foundation Establishment",
+    "realm_level": 6,
+    "dialogue": [
+      "I have wares for sale!",
+      "Spirit stones, fresh today!"
+    ]
+  }
+]

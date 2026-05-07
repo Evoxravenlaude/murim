@@ -2,6 +2,7 @@
  * particles.c — Particle system implementation
  */
 #include "particles.h"
+#include "weather.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -99,8 +100,20 @@ void particles_update(Game *game, float dt)
 
         p->pos.x += p->vel.x * dt;
         p->pos.y += p->vel.y * dt;
-        p->vel.y += 30.0f * dt; /* gravity */
-        p->vel.x *= 0.98f;      /* drag */
+        
+        weather_apply_wind_to_particle(&game->world, p, dt);
+
+        /* Trail update */
+        if (p->has_trail) {
+            p->trail_positions[p->trail_index] = p->pos;
+            p->trail_index = (p->trail_index + 1) % 4;
+        }
+
+        /* Friction for non-rain particles */
+        if (p->vel.y < 500.0f) {
+            p->vel.x *= (1.0f - 2.0f * dt);
+            p->vel.y *= (1.0f - 2.0f * dt);
+        }
         p->rotation += p->rot_speed * dt;
     }
 }
