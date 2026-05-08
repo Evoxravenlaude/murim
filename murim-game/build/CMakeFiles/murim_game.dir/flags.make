@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/usr/local/Cellar/raylib/5.5/include -I/Users/rav3n/.gemini/antigravity/scratch/murim-game/src
 
-C_FLAGS = -g -std=gnu11 -Wall -Wextra -Wpedantic
+C_FLAGS = -O3 -DNDEBUG -std=gnu11 -Wall -Wextra -Wpedantic
 

@@ -3,6 +3,8 @@
  * Heavenly Demon: Murim Chronicles v3.0
  */
 #include "alchemy.h"
+#include "audio_sys.h"
+#include "quests.h"
 #include "../ui/system_ui.h"
 #include "world.h"
 #include <math.h>
@@ -14,76 +16,61 @@
 static int player_resources[RESOURCE_COUNT] = {0};
 
 /* ─── Recipe definitions ──────────────────────────────── */
+static void def_recipe(Game *g, int *idx, const char *name, RecipeCategory cat,
+    ItemType result, ItemRarity rar, const char *desc,
+    ResourceType i0, int c0, ResourceType i1, int c1,
+    ResourceType i2, int c2, bool unlocked)
+{
+    if (*idx >= MAX_RECIPES) return;
+    AlchemyRecipe *r = &g->recipes[*idx];
+    r->unlocked = unlocked;
+    strncpy(r->name, name, 31);
+    r->category = cat;
+    r->result = result;
+    r->result_rarity = rar;
+    strncpy(r->description, desc, 63);
+    r->num_ingredients = 0;
+    if (i0 != RESOURCE_NONE) { r->ingredients[r->num_ingredients] = i0; r->ingredient_counts[r->num_ingredients++] = c0; }
+    if (i1 != RESOURCE_NONE) { r->ingredients[r->num_ingredients] = i1; r->ingredient_counts[r->num_ingredients++] = c1; }
+    if (i2 != RESOURCE_NONE) { r->ingredients[r->num_ingredients] = i2; r->ingredient_counts[r->num_ingredients++] = c2; }
+    (*idx)++;
+}
+
 static void register_recipes(Game *game) {
-  int idx = 0;
-
-  /* Healing Potion */
-  game->recipes[idx].unlocked = true;
-  strncpy(game->recipes[idx].name, "Healing Elixir", 31);
-  game->recipes[idx].category = RECIPE_POTION;
-  game->recipes[idx].result = ITEM_HEALING_PILL;
-  game->recipes[idx].result_rarity = RARITY_COMMON;
-  game->recipes[idx].ingredients[0] = RESOURCE_HERB_RED;
-  game->recipes[idx].ingredient_counts[0] = 3;
-  game->recipes[idx].num_ingredients = 1;
-  strncpy(game->recipes[idx].description, "Restores 50 HP", 63);
-  idx++;
-
-  /* Qi Restoration */
-  game->recipes[idx].unlocked = true;
-  strncpy(game->recipes[idx].name, "Qi Restoration Pill", 31);
-  game->recipes[idx].category = RECIPE_POTION;
-  game->recipes[idx].result = ITEM_QI_PILL;
-  game->recipes[idx].result_rarity = RARITY_UNCOMMON;
-  game->recipes[idx].ingredients[0] = RESOURCE_HERB_BLUE;
-  game->recipes[idx].ingredient_counts[0] = 3;
-  game->recipes[idx].num_ingredients = 1;
-  strncpy(game->recipes[idx].description, "Restores 40 QI", 63);
-  idx++;
-
-  /* Attack Oil */
-  game->recipes[idx].unlocked = true;
-  strncpy(game->recipes[idx].name, "Beast-Bane Oil", 31);
-  game->recipes[idx].category = RECIPE_OIL;
-  game->recipes[idx].result = ITEM_BUFF_POTION_ATK;
-  game->recipes[idx].result_rarity = RARITY_RARE;
-  game->recipes[idx].ingredients[0] = RESOURCE_HERB_RED;
-  game->recipes[idx].ingredient_counts[0] = 2;
-  game->recipes[idx].ingredients[1] = RESOURCE_HERB_GOLD;
-  game->recipes[idx].ingredient_counts[1] = 1;
-  game->recipes[idx].num_ingredients = 2;
-  strncpy(game->recipes[idx].description, "+30% ATK vs beasts for 60s", 63);
-  idx++;
-
-  /* Defense Elixir */
-  game->recipes[idx].unlocked = true;
-  strncpy(game->recipes[idx].name, "Iron Skin Elixir", 31);
-  game->recipes[idx].category = RECIPE_ELIXIR;
-  game->recipes[idx].result = ITEM_BUFF_POTION_DEF;
-  game->recipes[idx].result_rarity = RARITY_RARE;
-  game->recipes[idx].ingredients[0] = RESOURCE_ORE_IRON;
-  game->recipes[idx].ingredient_counts[0] = 2;
-  game->recipes[idx].ingredients[1] = RESOURCE_HERB_BLUE;
-  game->recipes[idx].ingredient_counts[1] = 2;
-  game->recipes[idx].num_ingredients = 2;
-  strncpy(game->recipes[idx].description, "+50% DEF for 45s", 63);
-  idx++;
-
-  /* Spirit Bomb */
-  game->recipes[idx].unlocked = false;
-  strncpy(game->recipes[idx].name, "Spirit Bomb", 31);
-  game->recipes[idx].category = RECIPE_BOMB;
-  game->recipes[idx].result = ITEM_BUFF_POTION_ATK;
-  game->recipes[idx].result_rarity = RARITY_EPIC;
-  game->recipes[idx].ingredients[0] = RESOURCE_ORE_SPIRIT;
-  game->recipes[idx].ingredient_counts[0] = 3;
-  game->recipes[idx].ingredients[1] = RESOURCE_CRYSTAL;
-  game->recipes[idx].ingredient_counts[1] = 1;
-  game->recipes[idx].num_ingredients = 2;
-  strncpy(game->recipes[idx].description, "AoE explosion dealing 200 dmg", 63);
-  idx++;
-
-  game->recipe_count = idx;
+    int idx = 0;
+    /* ─── POTIONS ─────────────────────────────────── */
+    def_recipe(game, &idx, "Minor Healing Elixir",  RECIPE_POTION, ITEM_HEALING_PILL, RARITY_COMMON,   "Restores 50 HP",          RESOURCE_HERB_RED,  2, RESOURCE_NONE,0, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Healing Elixir",        RECIPE_POTION, ITEM_HEALING_PILL, RARITY_UNCOMMON, "Restores 120 HP",         RESOURCE_HERB_RED,  4, RESOURCE_HERB_GOLD,1, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Major Healing Elixir",  RECIPE_POTION, ITEM_HEALING_PILL, RARITY_RARE,     "Restores full HP",        RESOURCE_HERB_RED,  6, RESOURCE_HERB_GOLD,2, RESOURCE_CRYSTAL,1, false);
+    def_recipe(game, &idx, "Minor Qi Pill",         RECIPE_POTION, ITEM_QI_PILL,      RARITY_COMMON,   "Restores 40 QI",          RESOURCE_HERB_BLUE, 2, RESOURCE_NONE,0, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Qi Restoration Pill",   RECIPE_POTION, ITEM_QI_PILL,      RARITY_UNCOMMON, "Restores 100 QI",         RESOURCE_HERB_BLUE, 4, RESOURCE_HERB_GOLD,1, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Grand Qi Elixir",       RECIPE_POTION, ITEM_QI_PILL,      RARITY_RARE,     "Restores full QI",        RESOURCE_HERB_BLUE, 6, RESOURCE_ORE_SPIRIT,1, RESOURCE_CRYSTAL,1, false);
+    def_recipe(game, &idx, "Spirit Stone Pill",     RECIPE_POTION, ITEM_SPIRIT_STONE,  RARITY_UNCOMMON, "+200 cultivation qi",     RESOURCE_ORE_SPIRIT,2, RESOURCE_HERB_GOLD,2, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Capture Orb",           RECIPE_POTION, ITEM_CAPTURE_ORB,   RARITY_UNCOMMON, "Tame a weakened beast",   RESOURCE_CRYSTAL,   2, RESOURCE_HERB_BLUE,2, RESOURCE_ORE_IRON,1, true);
+    /* ─── OILS ────────────────────────────────────── */
+    def_recipe(game, &idx, "Beast-Bane Oil",        RECIPE_OIL,    ITEM_BUFF_POTION_ATK, RARITY_UNCOMMON, "+30% ATK for 60s",      RESOURCE_HERB_RED,  2, RESOURCE_HERB_GOLD,1, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Demon-Slayer Oil",      RECIPE_OIL,    ITEM_BUFF_POTION_ATK, RARITY_RARE,     "+50% ATK vs dark qi",   RESOURCE_HERB_RED,  3, RESOURCE_ORE_SPIRIT,1, RESOURCE_CRYSTAL,1, false);
+    def_recipe(game, &idx, "Iron-Skin Oil",         RECIPE_OIL,    ITEM_BUFF_POTION_DEF, RARITY_UNCOMMON, "+30% DEF for 45s",      RESOURCE_ORE_IRON,  2, RESOURCE_HERB_BLUE,2, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Heaven-Shield Elixir",  RECIPE_OIL,    ITEM_BUFF_POTION_DEF, RARITY_RARE,     "+60% DEF for 90s",      RESOURCE_ORE_IRON,  3, RESOURCE_CRYSTAL,  2, RESOURCE_HERB_GOLD,2, false);
+    def_recipe(game, &idx, "Wind-Step Oil",         RECIPE_OIL,    ITEM_BUFF_POTION_SPD, RARITY_UNCOMMON, "+40% SPD for 30s",      RESOURCE_HERB_BLUE, 2, RESOURCE_WOOD,     2, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Nine-Heaven Speed Pill",RECIPE_OIL,    ITEM_BUFF_POTION_SPD, RARITY_EPIC,     "+80% SPD for 60s",      RESOURCE_HERB_GOLD, 3, RESOURCE_ORE_SPIRIT,2, RESOURCE_CRYSTAL,2, false);
+    /* ─── ELIXIRS ─────────────────────────────────── */
+    def_recipe(game, &idx, "Iron Body Elixir",      RECIPE_ELIXIR, ITEM_BUFF_POTION_DEF, RARITY_RARE,     "Tempers body for 2min",  RESOURCE_ORE_IRON,  4, RESOURCE_HERB_RED, 2, RESOURCE_HERB_BLUE,2, false);
+    def_recipe(game, &idx, "Dragon Blood Elixir",   RECIPE_ELIXIR, ITEM_BUFF_POTION_ATK, RARITY_EPIC,     "+100% ATK for 30s",      RESOURCE_CRYSTAL,   3, RESOURCE_ORE_SPIRIT,3, RESOURCE_HERB_GOLD,3, false);
+    def_recipe(game, &idx, "Shadow Step Brew",      RECIPE_ELIXIR, ITEM_BUFF_POTION_SPD, RARITY_RARE,     "Reduces dash cooldown",  RESOURCE_HERB_BLUE, 3, RESOURCE_WOOD,     2, RESOURCE_CRYSTAL,  1, false);
+    def_recipe(game, &idx, "Evolution Stone",       RECIPE_ELIXIR, ITEM_EVOLUTION_STONE, RARITY_EPIC,     "Evolve a tamed beast",   RESOURCE_CRYSTAL,   4, RESOURCE_ORE_SPIRIT,4, RESOURCE_HERB_GOLD,4, false);
+    def_recipe(game, &idx, "Shadow Crystal Brew",   RECIPE_ELIXIR, ITEM_SHADOW_CRYSTAL,  RARITY_LEGENDARY,"Amplify shadow power",  RESOURCE_CRYSTAL,   5, RESOURCE_ORE_SPIRIT,5, RESOURCE_HERB_GOLD,5, false);
+    /* ─── BOMBS ───────────────────────────────────── */
+    def_recipe(game, &idx, "Qi Shockwave Bomb",     RECIPE_BOMB,   ITEM_BUFF_POTION_ATK, RARITY_UNCOMMON, "AoE 60 qi damage",       RESOURCE_ORE_IRON,  2, RESOURCE_HERB_RED, 2, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Flame Spirit Bomb",     RECIPE_BOMB,   ITEM_BUFF_POTION_ATK, RARITY_RARE,     "Fire AoE 150 damage",    RESOURCE_HERB_RED,  4, RESOURCE_CRYSTAL,  2, RESOURCE_NONE,0, false);
+    def_recipe(game, &idx, "Frost Cage Bomb",       RECIPE_BOMB,   ITEM_BUFF_POTION_DEF, RARITY_RARE,     "Freezes enemies 3s",     RESOURCE_HERB_BLUE, 4, RESOURCE_ORE_IRON, 2, RESOURCE_NONE,0, false);
+    def_recipe(game, &idx, "Thunder Talisman",      RECIPE_BOMB,   ITEM_BUFF_POTION_ATK, RARITY_EPIC,     "Lightning strike 200dmg",RESOURCE_ORE_SPIRIT,3, RESOURCE_CRYSTAL,  3, RESOURCE_HERB_GOLD,2, false);
+    def_recipe(game, &idx, "Smoke Screen Bomb",     RECIPE_BOMB,   ITEM_BUFF_POTION_SPD, RARITY_UNCOMMON, "Escape and +SPD 20s",    RESOURCE_WOOD,      3, RESOURCE_HERB_BLUE,2, RESOURCE_NONE,0, true);
+    def_recipe(game, &idx, "Shadow Fog Grenade",    RECIPE_BOMB,   ITEM_SHADOW_CRYSTAL,  RARITY_RARE,     "Shadow AoE, fear effect",RESOURCE_CRYSTAL,   2, RESOURCE_HERB_BLUE,3, RESOURCE_ORE_SPIRIT,1, false);
+    def_recipe(game, &idx, "Heaven-Earth Pill",     RECIPE_ELIXIR, ITEM_HEALING_PILL,    RARITY_LEGENDARY,"Full heal + breakthrough",RESOURCE_CRYSTAL,  5, RESOURCE_ORE_SPIRIT,5, RESOURCE_HERB_GOLD,5, false);
+    def_recipe(game, &idx, "Immortal Spring Tea",   RECIPE_POTION, ITEM_QI_PILL,         RARITY_LEGENDARY,"Max HP+QI, triple regen", RESOURCE_HERB_GOLD, 5, RESOURCE_CRYSTAL,  4, RESOURCE_ORE_SPIRIT,4, false);
+    def_recipe(game, &idx, "Monarch's Elixir",      RECIPE_ELIXIR, ITEM_BUFF_POTION_ATK, RARITY_MYTHIC,   "All stats x2 for 60s",   RESOURCE_CRYSTAL,   8, RESOURCE_ORE_SPIRIT,8, RESOURCE_HERB_GOLD,8, false);
+    game->recipe_count = idx;
 }
 
 void alchemy_init(Game *game) {
@@ -235,6 +222,8 @@ void alchemy_update_nodes(Game *game, float dt) {
         char buf[48];
         snprintf(buf, sizeof(buf), "+1 %s", res_names[node->type]);
         system_notify(game, NOTIFY_INFO, "[ Gathered ]", buf);
+        quests_on_harvest(game, node->type);
+        audio_play(SFX_ITEM_PICKUP);
 
         if (node->amount <= 0) {
           node->active = false;

@@ -22,6 +22,7 @@
 #include "engine/types.h"
 #include "engine/weather.h"
 #include "game/alchemy.h"
+#include "game/audio_sys.h"
 #include "game/bestiary.h"
 #include "game/bounty.h"
 #include "game/combat.h"
@@ -34,7 +35,9 @@
 #include "game/fishing.h"
 #include "game/mounts.h"
 #include "game/npc.h"
+#include "game/quests.h"
 #include "game/reputation.h"
+#include "game/save.h"
 #include "game/standoff.h"
 #include "game/taming.h"
 #include "game/world.h"
@@ -59,6 +62,14 @@ static void game_restart(void);
 static void player_update(float dt);
 static void start_dialogue(const char *speaker, const char **lines, int count);
 static void update_dialogue(float dt);
+static void stat_alloc_update(void);
+static void stat_alloc_draw(const Game *game);
+
+/* ─── Stat allocation screen state ───────────────────── */
+static bool  s_stat_alloc_open = false;
+
+/* ─── Quest log state ─────────────────────────────────── */
+static bool  s_quest_log_open  = false;
 
 /* ─── Dialogue lines ──────────────────────────────────── */
 static const char *ELDER_DIALOGUE[] = {
@@ -148,18 +159,43 @@ static void game_init(void) {
   dungeon_spawn_gates(&game);
   events_init(&game);
   reputation_init(&game);
-  elements_init_entity(&game.entities[game.player_id], ELEMENT_SHADOW);
+    quests_init(&game);
+    elements_init_entity(&game.entities[game.player_id], ELEMENT_SHADOW);
 
-  /* Give some enemies elemental affinities */
-  for (int i = 0; i < MAX_ENTITIES; i++) {
-    Entity *e = &game.entities[i];
-    if (!e->active || i == game.player_id)
-      continue;
-    if (e->type == ENTITY_BEAST || e->type == ENTITY_NPC_HOSTILE) {
-      ElementType el = (ElementType)(1 + rand() % 7);
-      elements_init_entity(e, el);
+    /* Give some enemies elemental affinities */
+    for (int i = 0; i < MAX_ENTITIES; i++) {
+        Entity *e = &game.entities[i];
+        if (!e->active || i == game.player_id) continue;
+        if (e->type == ENTITY_BEAST || e->type == ENTITY_NPC_HOSTILE) {
+            ElementType el = (ElementType)(1 + rand() % 7);
+            elements_init_entity(e, el);
+        }
     }
-  }
+
+    /* Give player some starting herbs for early survival */
+    Entity *p = &game.entities[game.player_id];
+    p->inventory[0].type     = ITEM_HERB;
+    p->inventory[0].quantity = 4;
+    p->inventory[0].name     = "Wild Herb";
+    p->inventory[1].type     = ITEM_HEALING_PILL;
+    p->inventory[1].quantity = 2;
+    p->inventory[1].name     = "Minor Healing Pill";
+    p->inventory[2].type     = ITEM_CAPTURE_ORB;
+    p->inventory[2].quantity = 2;
+    p->inventory[2].name     = "Capture Orb";
+    p->num_items = 3;
+
+    /* Allocate fog of war */
+    game.fog = (FogOfWar *)calloc(1, sizeof(FogOfWar));
+    if (game.fog) game.fog->vision_range = 8;
+
+    /* Try to load save */
+    if (save_exists()) {
+        load_game(&game);
+        system_notify(&game, NOTIFY_INFO, "[ Save Loaded ]", "Welcome back, cultivator.");
+    }
+
+    audio_init();
 }
 
 /* ═══════════════════════════════════════════════════════ */
@@ -395,10 +431,77 @@ static void player_update(float dt) {
     combat_use_item(&game);
   }
 
+  /* Eat — N key near water or with food */
+  if (IsKeyPressed(KEY_N)) {
+    environment_eat(&game);
+    audio_play(SFX_ITEM_USE);
+  }
+  /* Drink — U key near water */
+  if (IsKeyPressed(KEY_U)) {
+    environment_drink(&game);
+    audio_play(SFX_ITEM_USE);
+  }
+
   /* Check if player died */
   if (player->stats.hp <= 0) {
     game.state = STATE_GAME_OVER;
   }
+}
+
+/* ─── Stat allocation update ──────────────────────────── */
+static void stat_alloc_update(void)
+{
+    Entity *player = &game.entities[game.player_id];
+    if (player->stats.stat_points <= 0) { s_stat_alloc_open = false; return; }
+
+    if (IsKeyPressed(KEY_ONE)) { /* STR */
+        player->stats.strength += 2; player->stats.attack += 2;
+        player->stats.stat_points--;
+        system_notify(&game, NOTIFY_SUCCESS, "[ Stat Allocated ]", "Strength +2");
+        audio_play(SFX_LEVEL_UP);
+    } else if (IsKeyPressed(KEY_TWO)) { /* VIT */
+        player->stats.vitality += 2; player->stats.max_hp += 20;
+        player->stats.hp += 20; player->stats.stat_points--;
+        system_notify(&game, NOTIFY_SUCCESS, "[ Stat Allocated ]", "Vitality +2, Max HP +20");
+        audio_play(SFX_LEVEL_UP);
+    } else if (IsKeyPressed(KEY_THREE)) { /* AGI */
+        player->stats.agility += 2; player->stats.speed += 5;
+        player->stats.stat_points--;
+        system_notify(&game, NOTIFY_SUCCESS, "[ Stat Allocated ]", "Agility +2, Speed +5");
+        audio_play(SFX_LEVEL_UP);
+    } else if (IsKeyPressed(KEY_FOUR)) { /* INT */
+        player->stats.intelligence += 2; player->stats.max_qi += 15;
+        player->stats.stat_points--;
+        system_notify(&game, NOTIFY_SUCCESS, "[ Stat Allocated ]", "Intelligence +2, Max QI +15");
+        audio_play(SFX_LEVEL_UP);
+    } else if (IsKeyPressed(KEY_FIVE)) { /* SENSE */
+        player->stats.sense += 2; player->stats.luck += 1;
+        player->stats.stat_points--;
+        system_notify(&game, NOTIFY_SUCCESS, "[ Stat Allocated ]", "Sense +2, Luck +1");
+        audio_play(SFX_LEVEL_UP);
+    }
+    if (IsKeyPressed(KEY_ESCAPE)) s_stat_alloc_open = false;
+}
+
+static void stat_alloc_draw(const Game *game)
+{
+    const Entity *p = &game->entities[game->player_id];
+    int px = SCREEN_WIDTH/2-220, py = SCREEN_HEIGHT/2-160;
+    DrawRectangle(px, py, 440, 320, (Color){5,10,25,230});
+    DrawRectangle(px, py, 440, 2,   (Color){60,120,255,220});
+    DrawRectangleLinesEx((Rectangle){px,py,440,320}, 1.5f, (Color){60,120,255,200});
+    DrawText("[ ALLOCATE STAT POINTS ]", px+50, py+16, 18, (Color){220,240,255,255});
+    char buf[64];
+    snprintf(buf, sizeof(buf), "Available: %d points", p->stats.stat_points);
+    DrawText(buf, px+130, py+42, 13, (Color){255,215,0,255});
+    DrawLine(px+20, py+60, px+420, py+60, (Color){60,120,255,150});
+    int y = py+74;
+    snprintf(buf, sizeof(buf), "[1] Strength   (STR: %d)  +2 STR, +2 ATK",  p->stats.strength);  DrawText(buf,px+30,y,12,(Color){255,120,120,255}); y+=28;
+    snprintf(buf, sizeof(buf), "[2] Vitality   (VIT: %d)  +2 VIT, +20 HP",  p->stats.vitality);  DrawText(buf,px+30,y,12,(Color){120,255,120,255}); y+=28;
+    snprintf(buf, sizeof(buf), "[3] Agility    (AGI: %d)  +2 AGI, +5 SPD",  p->stats.agility);   DrawText(buf,px+30,y,12,(Color){120,200,255,255}); y+=28;
+    snprintf(buf, sizeof(buf), "[4] Intelligence(INT: %d) +2 INT, +15 QI",  p->stats.intelligence);DrawText(buf,px+30,y,12,(Color){200,120,255,255}); y+=28;
+    snprintf(buf, sizeof(buf), "[5] Sense      (SEN: %d)  +2 SEN, +1 LCK", p->stats.sense);      DrawText(buf,px+30,y,12,(Color){255,215,0,255}); y+=28;
+    DrawText("[ESC] Close", px+170, py+288, 12, (Color){100,180,255,200});
 }
 
 static void start_dialogue(const char *speaker, const char **lines, int count) {
@@ -513,8 +616,25 @@ static void game_update(float dt) {
       system_notify(&game, NOTIFY_INFO, "[ Stance ]", buf);
     }
 
+    /* Stat allocation screen */
+    if (IsKeyPressed(KEY_P) && game.entities[game.player_id].stats.stat_points > 0) {
+      s_stat_alloc_open = !s_stat_alloc_open;
+    }
+    if (s_stat_alloc_open) { stat_alloc_update(); }
+
+    /* Quest log */
+    if (IsKeyPressed(KEY_J)) {
+      s_quest_log_open = !s_quest_log_open;
+    }
+
+    /* Save game — F10 */
+    if (IsKeyPressed(KEY_F10)) {
+      save_game(&game);
+      system_notify(&game, NOTIFY_SUCCESS, "[ SAVED ]", "Game saved successfully.");
+    }
+
     /* Pause */
-    if (IsKeyPressed(KEY_ESCAPE)) {
+    if (IsKeyPressed(KEY_ESCAPE) && !s_stat_alloc_open && !s_quest_log_open) {
       game.state = STATE_PAUSED;
       break;
     }
@@ -543,6 +663,8 @@ static void game_update(float dt) {
     weather_update(&game, dt);
     particles_update(&game, dt);
     system_ui_update(&game, dt);
+    audio_update(&game, dt);
+    quests_update(&game, dt);
 
     /* v3.0 system updates */
     elements_update(&game, dt);
@@ -556,6 +678,62 @@ static void game_update(float dt) {
     reputation_update(&game, dt);
     exploration_update(&game, dt);
     mounts_update(&game, dt);
+
+    /* Fog of war reveal around player */
+    if (game.fog) {
+        Entity *fp = &game.entities[game.player_id];
+        int tx = (int)(fp->pos.x / TILE_SIZE);
+        int ty = (int)(fp->pos.y / TILE_SIZE);
+        int vr = game.fog->vision_range;
+        for (int dy2 = -vr; dy2 <= vr; dy2++)
+            for (int dx2 = -vr; dx2 <= vr; dx2++) {
+                int ex = tx+dx2, ey = ty+dy2;
+                if (ex>=0&&ex<WORLD_TILES_X&&ey>=0&&ey<WORLD_TILES_Y)
+                    game.fog->explored[ey][ex] = true;
+            }
+    }
+
+    /* Loot drop auto-pickup */
+    {
+        Entity *lp = &game.entities[game.player_id];
+        for (int i = 0; i < MAX_LOOT_DROPS; i++) {
+            LootDrop *ld = &game.loot_drops[i];
+            if (!ld->active) continue;
+            ld->bob_timer += dt;
+            ld->timer -= dt;
+            float ldx = ld->pos.x - lp->pos.x, ldy = ld->pos.y - lp->pos.y;
+            if (ldx*ldx+ldy*ldy < 20.0f*20.0f) {
+                /* Auto-pickup */
+                for (int s = 0; s < MAX_ITEMS; s++) {
+                    if (lp->inventory[s].type == ITEM_NONE) {
+                        lp->inventory[s].type     = ld->item;
+                        lp->inventory[s].quantity = ld->quantity;
+                        lp->inventory[s].rarity   = ld->rarity;
+                        lp->inventory[s].name     = "Item";
+                        lp->num_items++;
+                        audio_play(SFX_ITEM_PICKUP);
+                        system_notify_item_drop(&game, "Item", ld->rarity);
+                        break;
+                    }
+                }
+                ld->active = false;
+            }
+            if (ld->timer <= 0) ld->active = false;
+        }
+    }
+
+    /* Iron Body mastery leveling (on taking damage) */
+    {
+        Entity *ibp = &game.entities[game.player_id];
+        if (ibp->flash_timer > 0) {
+            ibp->iron_body_mastery += 0.01f;
+            if (ibp->iron_body_mastery >= 10.0f) {
+                ibp->iron_body_mastery = 1.0f;
+                ibp->stats.defense += 3;
+                system_notify(&game, NOTIFY_SUCCESS, "[ Skill Leveled Up ]", "Iron Body increased!");
+            }
+        }
+    }
 
     /* Camera follow */
     Entity *player = &game.entities[game.player_id];
@@ -799,6 +977,59 @@ static void game_draw(void) {
 
     system_ui_draw_level_up(&game);
     system_ui_draw_notifications(&game);
+
+    /* Stat allocation overlay */
+    if (s_stat_alloc_open) stat_alloc_draw(&game);
+    /* Quest log overlay */
+    if (s_quest_log_open) quests_draw_log(&game);
+    /* Quest tracker (top right) */
+    if (!s_quest_log_open) quests_draw_tracker(&game);
+
+    /* Survival warning overlays */
+    {
+        const Entity *sw = &game.entities[game.player_id];
+        float t2 = (float)GetTime();
+        if (sw->stats.hunger < 20.0f) {
+            float a = sinf(t2*4.0f)*0.4f+0.6f;
+            const char *msg = "STARVING!";
+            int tw2 = MeasureText(msg,16);
+            DrawText(msg, SCREEN_WIDTH/2-tw2/2, SCREEN_HEIGHT/2+80, 16,
+                     (Color){255,120,30,(unsigned char)(a*255)});
+        }
+        if (sw->stats.thirst < 20.0f) {
+            float a = sinf(t2*4.0f+1.0f)*0.4f+0.6f;
+            const char *msg = "DEHYDRATED!";
+            int tw2 = MeasureText(msg,16);
+            DrawText(msg, SCREEN_WIDTH/2-tw2/2, SCREEN_HEIGHT/2+100, 16,
+                     (Color){80,160,255,(unsigned char)(a*255)});
+        }
+        /* Stat points available indicator */
+        if (sw->stats.stat_points > 0) {
+            float a = sinf(t2*3.0f)*0.3f+0.7f;
+            char spbuf[48]; snprintf(spbuf,sizeof(spbuf),"[P] %d Stat Points Available!",sw->stats.stat_points);
+            int spw = MeasureText(spbuf,13);
+            DrawText(spbuf, SCREEN_WIDTH/2-spw/2, SCREEN_HEIGHT/2+124, 13,
+                     (Color){255,215,0,(unsigned char)(a*220)});
+        }
+    }
+
+    /* Poise execute prompt on staggered nearby enemy */
+    {
+        const Entity *pp = &game.entities[game.player_id];
+        for (int pi = 0; pi < MAX_ENTITIES; pi++) {
+            const Entity *pe = &game.entities[pi];
+            if (!pe->active || pi == game.player_id) continue;
+            if (!pe->poise.is_staggered) continue;
+            float edx = pe->pos.x-pp->pos.x, edy = pe->pos.y-pp->pos.y;
+            if (edx*edx+edy*edy > 50.0f*50.0f) continue;
+            float ea = sinf((float)GetTime()*8.0f)*0.3f+0.7f;
+            const char *exec_msg = "[ SPACE ] HEAVENLY EXECUTION";
+            int emw = MeasureText(exec_msg, 14);
+            DrawText(exec_msg, SCREEN_WIDTH/2-emw/2, SCREEN_HEIGHT/2-80, 14,
+                     (Color){255,220,50,(unsigned char)(ea*255)});
+            break;
+        }
+    }
     break;
   }
 
@@ -864,9 +1095,9 @@ static void game_draw(void) {
     BeginMode2D(game.camera);
     renderer_draw_world(&game);
     renderer_draw_entities(&game);
-    fishing_draw(&game);
+    fishing_draw(&game); /* world-space bobber */
     EndMode2D();
-    fishing_draw(&game);
+    fishing_draw(&game); /* screen-space HUD — fishing_draw handles both */
     system_ui_draw_notifications(&game);
     break;
 
@@ -919,6 +1150,8 @@ int main(void) {
   }
 
   renderer_cleanup();
+  audio_cleanup();
+  if (game.fog) { free(game.fog); game.fog = NULL; }
   CloseWindow();
 
   return 0;

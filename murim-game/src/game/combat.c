@@ -3,9 +3,11 @@
  * Heavenly Demon: Murim Chronicles
  */
 #include "combat.h"
+#include "audio_sys.h"
 #include "bestiary.h"
 #include "bounty.h"
 #include "elements.h"
+#include "quests.h"
 #include "../engine/particles.h"
 #include "../engine/camera.h"
 #include "../ui/system_ui.h"
@@ -191,6 +193,7 @@ void combat_apply_damage(Game *game, Entity *attacker, Entity *defender)
         particle_burst(game, defender->pos, (Color){255,220,50,255}, 30, 180.0f, 0.8f, 6.0f);
         camera_shake(game, 15.0f, 0.4f);
         system_notify(game, NOTIFY_SUCCESS, "[ Heavenly Execution ]", "Poise Broken!");
+        audio_play(SFX_EXECUTION);
     }
 
     /* v3.0: Apply elemental reaction ON HIT (not just on kill) */
@@ -212,8 +215,10 @@ void combat_apply_damage(Game *game, Entity *attacker, Entity *defender)
             attacker->cultivation.qi_absorbed += 5.0f + defender->stats.max_hp * 0.1f;
             bestiary_log_kill(game, defender);
             bounty_on_kill(game, defender);
+            quests_on_kill(game, defender);
             attacker->kills++;
             game->total_kills++;
+            audio_play(SFX_SWORD_HIT);
 
             /* Spawn loot drop */
             for (int i = 0; i < MAX_LOOT_DROPS; i++) {

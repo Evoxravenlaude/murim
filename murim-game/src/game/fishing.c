@@ -7,6 +7,8 @@
  * Tension >= 100 = line breaks. Progress >= 100 = caught!
  */
 #include "fishing.h"
+#include "audio_sys.h"
+#include "quests.h"
 #include "world.h"
 #include "alchemy.h"
 #include "../ui/system_ui.h"
@@ -111,6 +113,7 @@ void fishing_update(Game *game, float dt)
             s_reel_progress = 0;
             particle_burst(game, s_bobber_pos, (Color){100,200,255,200}, 8, 40.0f, 0.4f, 2.0f);
             system_notify(game, NOTIFY_INFO, "[ Fishing ]", "Fish on! Hold H to reel!");
+            audio_play(SFX_FISH_BITE);
         }
         /* Player can cancel */
         if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_H)) {
@@ -157,6 +160,8 @@ void fishing_update(Game *game, float dt)
         char buf[80]; snprintf(buf, sizeof(buf), "Caught %s! +%d gold", FISH_TABLE[s_fish_type].name, val);
         system_notify(game, NOTIFY_SUCCESS, "[ Fish Caught! ]", buf);
         particle_burst(game, player->pos, rarity_color(FISH_TABLE[s_fish_type].rarity), 20, 100.0f, 0.8f, 4.0f);
+        quests_on_fish(game);
+        audio_play(SFX_FISH_CAUGHT);
         game->state = STATE_PLAYING;
     }
 }

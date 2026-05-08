@@ -37,6 +37,7 @@ CMakeFiles/murim_game.dir/src/main.c.o: \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/weather.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/alchemy.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/../engine/types.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/bestiary.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/bounty.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/combat.h \
@@ -49,7 +50,9 @@ CMakeFiles/murim_game.dir/src/main.c.o: \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/fishing.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/mounts.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/npc.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/reputation.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/save.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/standoff.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/taming.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/world.h \

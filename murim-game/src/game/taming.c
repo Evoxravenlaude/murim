@@ -6,11 +6,13 @@
  * Shadow-power holders can whisper "ARISE" after killing a boss.
  */
 #include "taming.h"
+#include "audio_sys.h"
+#include "combat.h"
+#include "quests.h"
 #include "../ui/system_ui.h"
 #include "../engine/particles.h"
 #include "../engine/camera.h"
 #include "npc.h"
-#include "combat.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

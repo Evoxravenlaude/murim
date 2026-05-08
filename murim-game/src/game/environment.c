@@ -61,6 +61,47 @@ EnvironmentZone environment_get_zone(const Game *game, Vec2 pos)
     return ZONE_NORMAL;
 }
 
+/* ─── Food/drink item consumption ────────────────────── */
+void environment_eat(Game *game)
+{
+    Entity *player = &game->entities[game->player_id];
+    /* Find meat/food in inventory */
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        InventorySlot *slot = &player->inventory[i];
+        if (slot->type == ITEM_HERB && slot->quantity > 0) {
+            player->stats.hunger += 30.0f;
+            player->stats.thirst += 10.0f;
+            if (player->stats.hunger > 100.0f) player->stats.hunger = 100.0f;
+            if (player->stats.thirst > 100.0f) player->stats.thirst = 100.0f;
+            slot->quantity--;
+            if (slot->quantity <= 0) { slot->type = ITEM_NONE; player->num_items--; }
+            system_notify(game, NOTIFY_INFO, "[ Survival ]", "Ate herb: +30 Hunger");
+            return;
+        }
+    }
+    system_notify(game, NOTIFY_WARNING, "[ Survival ]", "Nothing edible in inventory!");
+}
+
+void environment_drink(Game *game)
+{
+    Entity *player = &game->entities[game->player_id];
+    TileType tile = world_get_tile_at(&game->world, player->pos.x, player->pos.y);
+    bool near_water = (tile == TILE_WATER);
+    int offsets[4][2] = {{0,-TILE_SIZE},{0,TILE_SIZE},{-TILE_SIZE,0},{TILE_SIZE,0}};
+    for (int i = 0; i < 4 && !near_water; i++) {
+        TileType t = world_get_tile_at(&game->world,
+            player->pos.x + offsets[i][0], player->pos.y + offsets[i][1]);
+        if (t == TILE_WATER) near_water = true;
+    }
+    if (near_water) {
+        player->stats.thirst += 50.0f;
+        if (player->stats.thirst > 100.0f) player->stats.thirst = 100.0f;
+        system_notify(game, NOTIFY_INFO, "[ Survival ]", "Drank water: +50 Thirst");
+    } else {
+        system_notify(game, NOTIFY_WARNING, "[ Survival ]", "No water source nearby!");
+    }
+}
+
 void environment_update(Game *game, float dt)
 {
     Entity *player = &game->entities[game->player_id];
@@ -149,9 +190,32 @@ void environment_update(Game *game, float dt)
 
     /* === HIGH ALTITUDE === */
     if (zone == ZONE_HIGH_ALTITUDE) {
-        /* Stamina drains faster, fatigue drops */
         player->stats.fatigue -= dt * 2.0f;
         if (player->stats.fatigue < 0) player->stats.fatigue = 0;
+    }
+
+    /* === SURVIVAL CORE CONSEQUENCES === */
+    static float s_hunger_dmg_timer = 0, s_thirst_dmg_timer = 0;
+    s_hunger_dmg_timer -= dt;
+    s_thirst_dmg_timer -= dt;
+
+    if (player->stats.hunger <= 0) {
+        player->stats.hunger = 0;
+        if (s_hunger_dmg_timer <= 0) {
+            player->stats.hp -= 2;
+            s_hunger_dmg_timer = 1.0f;
+        }
+    }
+    if (player->stats.thirst <= 0) {
+        player->stats.thirst = 0;
+        if (s_thirst_dmg_timer <= 0) {
+            player->stats.hp -= 4; /* dehydration is deadlier */
+            s_thirst_dmg_timer = 1.0f;
+        }
+    }
+    /* Low fatigue → halve effective speed */
+    if (player->stats.fatigue < 10.0f) {
+        player->environment.cold_slow_factor = 0.5f;
     }
 }
 

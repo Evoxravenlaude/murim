@@ -85,12 +85,12 @@ clean: CMakeFiles/murim_game.dir/clean
 CMakeFiles/murim_game.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 "Built target murim_game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28 "Built target murim_game"
 .PHONY : CMakeFiles/murim_game.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/murim_game.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles 25
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles 28
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/murim_game.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles 0
 .PHONY : CMakeFiles/murim_game.dir/rule
@@ -102,7 +102,7 @@ murim_game: CMakeFiles/murim_game.dir/rule
 # codegen rule for target.
 CMakeFiles/murim_game.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25 "Finished codegen for target murim_game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28 "Finished codegen for target murim_game"
 .PHONY : CMakeFiles/murim_game.dir/codegen
 
 # clean rule for target.

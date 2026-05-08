@@ -249,6 +249,30 @@ src/game/alchemy.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/alchemy.c.s
 .PHONY : src/game/alchemy.c.s
 
+src/game/audio_sys.o: src/game/audio_sys.c.o
+.PHONY : src/game/audio_sys.o
+
+# target to build an object file
+src/game/audio_sys.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/audio_sys.c.o
+.PHONY : src/game/audio_sys.c.o
+
+src/game/audio_sys.i: src/game/audio_sys.c.i
+.PHONY : src/game/audio_sys.i
+
+# target to preprocess a source file
+src/game/audio_sys.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/audio_sys.c.i
+.PHONY : src/game/audio_sys.c.i
+
+src/game/audio_sys.s: src/game/audio_sys.c.s
+.PHONY : src/game/audio_sys.s
+
+# target to generate assembly for a file
+src/game/audio_sys.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/audio_sys.c.s
+.PHONY : src/game/audio_sys.c.s
+
 src/game/bestiary.o: src/game/bestiary.c.o
 .PHONY : src/game/bestiary.o
 
@@ -537,6 +561,30 @@ src/game/npc.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/npc.c.s
 .PHONY : src/game/npc.c.s
 
+src/game/quests.o: src/game/quests.c.o
+.PHONY : src/game/quests.o
+
+# target to build an object file
+src/game/quests.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/quests.c.o
+.PHONY : src/game/quests.c.o
+
+src/game/quests.i: src/game/quests.c.i
+.PHONY : src/game/quests.i
+
+# target to preprocess a source file
+src/game/quests.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/quests.c.i
+.PHONY : src/game/quests.c.i
+
+src/game/quests.s: src/game/quests.c.s
+.PHONY : src/game/quests.s
+
+# target to generate assembly for a file
+src/game/quests.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/quests.c.s
+.PHONY : src/game/quests.c.s
+
 src/game/reputation.o: src/game/reputation.c.o
 .PHONY : src/game/reputation.o
 
@@ -560,6 +608,30 @@ src/game/reputation.s: src/game/reputation.c.s
 src/game/reputation.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/reputation.c.s
 .PHONY : src/game/reputation.c.s
+
+src/game/save.o: src/game/save.c.o
+.PHONY : src/game/save.o
+
+# target to build an object file
+src/game/save.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/save.c.o
+.PHONY : src/game/save.c.o
+
+src/game/save.i: src/game/save.c.i
+.PHONY : src/game/save.i
+
+# target to preprocess a source file
+src/game/save.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/save.c.i
+.PHONY : src/game/save.c.i
+
+src/game/save.s: src/game/save.c.s
+.PHONY : src/game/save.s
+
+# target to generate assembly for a file
+src/game/save.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/murim_game.dir/build.make CMakeFiles/murim_game.dir/src/game/save.c.s
+.PHONY : src/game/save.c.s
 
 src/game/standoff.o: src/game/standoff.c.o
 .PHONY : src/game/standoff.o
@@ -729,6 +801,9 @@ help:
 	@echo "... src/game/alchemy.o"
 	@echo "... src/game/alchemy.i"
 	@echo "... src/game/alchemy.s"
+	@echo "... src/game/audio_sys.o"
+	@echo "... src/game/audio_sys.i"
+	@echo "... src/game/audio_sys.s"
 	@echo "... src/game/bestiary.o"
 	@echo "... src/game/bestiary.i"
 	@echo "... src/game/bestiary.s"
@@ -765,9 +840,15 @@ help:
 	@echo "... src/game/npc.o"
 	@echo "... src/game/npc.i"
 	@echo "... src/game/npc.s"
+	@echo "... src/game/quests.o"
+	@echo "... src/game/quests.i"
+	@echo "... src/game/quests.s"
 	@echo "... src/game/reputation.o"
 	@echo "... src/game/reputation.i"
 	@echo "... src/game/reputation.s"
+	@echo "... src/game/save.o"
+	@echo "... src/game/save.i"
+	@echo "... src/game/save.s"
 	@echo "... src/game/standoff.o"
 	@echo "... src/game/standoff.i"
 	@echo "... src/game/standoff.s"

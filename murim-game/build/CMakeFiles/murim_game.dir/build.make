@@ -408,6 +408,48 @@ CMakeFiles/murim_game.dir/src/ui/system_ui.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/murim_game.dir/src/ui/system_ui.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/ui/system_ui.c -o CMakeFiles/murim_game.dir/src/ui/system_ui.c.s
 
+CMakeFiles/murim_game.dir/src/game/save.c.o: CMakeFiles/murim_game.dir/flags.make
+CMakeFiles/murim_game.dir/src/game/save.c.o: /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/save.c
+CMakeFiles/murim_game.dir/src/game/save.c.o: CMakeFiles/murim_game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object CMakeFiles/murim_game.dir/src/game/save.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/murim_game.dir/src/game/save.c.o -MF CMakeFiles/murim_game.dir/src/game/save.c.o.d -o CMakeFiles/murim_game.dir/src/game/save.c.o -c /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/save.c
+
+CMakeFiles/murim_game.dir/src/game/save.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/murim_game.dir/src/game/save.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/save.c > CMakeFiles/murim_game.dir/src/game/save.c.i
+
+CMakeFiles/murim_game.dir/src/game/save.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/murim_game.dir/src/game/save.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/save.c -o CMakeFiles/murim_game.dir/src/game/save.c.s
+
+CMakeFiles/murim_game.dir/src/game/audio_sys.c.o: CMakeFiles/murim_game.dir/flags.make
+CMakeFiles/murim_game.dir/src/game/audio_sys.c.o: /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.c
+CMakeFiles/murim_game.dir/src/game/audio_sys.c.o: CMakeFiles/murim_game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object CMakeFiles/murim_game.dir/src/game/audio_sys.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/murim_game.dir/src/game/audio_sys.c.o -MF CMakeFiles/murim_game.dir/src/game/audio_sys.c.o.d -o CMakeFiles/murim_game.dir/src/game/audio_sys.c.o -c /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.c
+
+CMakeFiles/murim_game.dir/src/game/audio_sys.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/murim_game.dir/src/game/audio_sys.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.c > CMakeFiles/murim_game.dir/src/game/audio_sys.c.i
+
+CMakeFiles/murim_game.dir/src/game/audio_sys.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/murim_game.dir/src/game/audio_sys.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.c -o CMakeFiles/murim_game.dir/src/game/audio_sys.c.s
+
+CMakeFiles/murim_game.dir/src/game/quests.c.o: CMakeFiles/murim_game.dir/flags.make
+CMakeFiles/murim_game.dir/src/game/quests.c.o: /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.c
+CMakeFiles/murim_game.dir/src/game/quests.c.o: CMakeFiles/murim_game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object CMakeFiles/murim_game.dir/src/game/quests.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/murim_game.dir/src/game/quests.c.o -MF CMakeFiles/murim_game.dir/src/game/quests.c.o.d -o CMakeFiles/murim_game.dir/src/game/quests.c.o -c /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.c
+
+CMakeFiles/murim_game.dir/src/game/quests.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/murim_game.dir/src/game/quests.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.c > CMakeFiles/murim_game.dir/src/game/quests.c.i
+
+CMakeFiles/murim_game.dir/src/game/quests.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/murim_game.dir/src/game/quests.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.c -o CMakeFiles/murim_game.dir/src/game/quests.c.s
+
 # Object files for target murim_game
 murim_game_OBJECTS = \
 "CMakeFiles/murim_game.dir/src/main.c.o" \
@@ -433,7 +475,10 @@ murim_game_OBJECTS = \
 "CMakeFiles/murim_game.dir/src/game/fishing.c.o" \
 "CMakeFiles/murim_game.dir/src/game/reputation.c.o" \
 "CMakeFiles/murim_game.dir/src/ui/hud.c.o" \
-"CMakeFiles/murim_game.dir/src/ui/system_ui.c.o"
+"CMakeFiles/murim_game.dir/src/ui/system_ui.c.o" \
+"CMakeFiles/murim_game.dir/src/game/save.c.o" \
+"CMakeFiles/murim_game.dir/src/game/audio_sys.c.o" \
+"CMakeFiles/murim_game.dir/src/game/quests.c.o"
 
 # External object files for target murim_game
 murim_game_EXTERNAL_OBJECTS =
@@ -462,9 +507,12 @@ bin/murim_game: CMakeFiles/murim_game.dir/src/game/fishing.c.o
 bin/murim_game: CMakeFiles/murim_game.dir/src/game/reputation.c.o
 bin/murim_game: CMakeFiles/murim_game.dir/src/ui/hud.c.o
 bin/murim_game: CMakeFiles/murim_game.dir/src/ui/system_ui.c.o
+bin/murim_game: CMakeFiles/murim_game.dir/src/game/save.c.o
+bin/murim_game: CMakeFiles/murim_game.dir/src/game/audio_sys.c.o
+bin/murim_game: CMakeFiles/murim_game.dir/src/game/quests.c.o
 bin/murim_game: CMakeFiles/murim_game.dir/build.make
 bin/murim_game: CMakeFiles/murim_game.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking C executable bin/murim_game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/rav3n/.gemini/antigravity/scratch/murim-game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Linking C executable bin/murim_game"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/murim_game.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

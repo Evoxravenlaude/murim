@@ -34,6 +34,10 @@ set(SOURCES
     src/game/reputation.c
     src/ui/hud.c
     src/ui/system_ui.c
+    # v4.0 new systems
+    src/game/save.c
+    src/game/audio_sys.c
+    src/game/quests.c
 )
 
 # Create executable

@@ -111,12 +111,15 @@ void hud_draw(const Game *game)
         DrawText("[1-5] Switch", 20, SCREEN_HEIGHT - 16, 8, HUD_TEXT_DIM);
     }
 
-    /* ─── Bottom-right: Controls hint ───────────────── */
-    draw_panel(SCREEN_WIDTH - 200, SCREEN_HEIGHT - 70, 190, 60);
-    DrawText("WASD: Move  SPACE: Attack", SCREEN_WIDTH - 190, SCREEN_HEIGHT - 62, 8, HUD_TEXT_DIM);
-    DrawText("E: Cultivate  Q: Technique", SCREEN_WIDTH - 190, SCREEN_HEIGHT - 50, 8, HUD_TEXT_DIM);
-    DrawText("TAB: Stats    ESC: Pause", SCREEN_WIDTH - 190, SCREEN_HEIGHT - 38, 8, HUD_TEXT_DIM);
-    DrawText("F3: Debug", SCREEN_WIDTH - 190, SCREEN_HEIGHT - 26, 8, HUD_TEXT_DIM);
+    /* ─── Bottom-right: Controls hint ────────────── */
+    draw_panel(SCREEN_WIDTH - 210, SCREEN_HEIGHT - 110, 200, 100);
+    DrawText("WASD: Move  SPACE: Attack", SCREEN_WIDTH - 202, SCREEN_HEIGHT - 102, 8, HUD_TEXT_DIM);
+    DrawText("E: Cultivate  Q: Technique", SCREEN_WIDTH - 202, SCREEN_HEIGHT - 90, 8, HUD_TEXT_DIM);
+    DrawText("TAB: Stats    ESC: Pause",   SCREEN_WIDTH - 202, SCREEN_HEIGHT - 78, 8, HUD_TEXT_DIM);
+    DrawText("F: Harvest    H: Fish",      SCREEN_WIDTH - 202, SCREEN_HEIGHT - 66, 8, HUD_TEXT_DIM);
+    DrawText("N: Eat        U: Drink",     SCREEN_WIDTH - 202, SCREEN_HEIGHT - 54, 8, HUD_TEXT_DIM);
+    DrawText("J: Quests     P: Stats(+)",  SCREEN_WIDTH - 202, SCREEN_HEIGHT - 42, 8, HUD_TEXT_DIM);
+    DrawText("F3: Debug     F10: Save",    SCREEN_WIDTH - 202, SCREEN_HEIGHT - 30, 8, HUD_TEXT_DIM);
 
     /* ─── Debug info ────────────────────────────────── */
     if (game->show_debug) {

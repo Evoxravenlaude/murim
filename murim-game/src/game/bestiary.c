@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 
-/* ─── Predefined bestiary templates ───────────────────── */
+/* ─── Predefined bestiary templates (50 creatures) ────── */
 static const struct {
     const char *name;
     const char *lore;
@@ -18,18 +18,55 @@ static const struct {
     ElementType weakness;
     ElementType resistance;
 } BESTIARY_TEMPLATES[] = {
-    { "Rogue Disciple", "Fallen cultivators who turned to banditry.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_NONE },
-    { "Dark Sect Member", "Members of the forbidden Dark Sect.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_SHADOW },
-    { "Shadow Assassin", "Silent killers who strike from darkness.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_SHADOW },
-    { "Demon Cultivator", "Those who cultivate demonic qi.", ENTITY_NPC_HOSTILE, ELEMENT_ICE, ELEMENT_FIRE },
-    { "Spirit Wolf", "Wolves infused with nature qi.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_WIND },
-    { "Iron Boar", "Beasts with iron-like hide.", ENTITY_BEAST, ELEMENT_LIGHTNING, ELEMENT_EARTH },
-    { "Flame Fox", "Foxes that command fire qi.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_FIRE },
-    { "Jade Serpent", "Venomous serpents of the jade forests.", ENTITY_BEAST, ELEMENT_ICE, ELEMENT_EARTH },
-    { "Thunder Hawk", "Hawks that ride lightning storms.", ENTITY_BEAST, ELEMENT_EARTH, ELEMENT_LIGHTNING },
-    { "Stone Bear", "Ancient bears with stone-like fur.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_EARTH },
-    { "Shadow Cat", "Felines that meld with shadows.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_SHADOW },
-    { "Wind Tiger", "Tigers that command the wind.", ENTITY_BEAST, ELEMENT_EARTH, ELEMENT_WIND },
+    /* ── Hostile Cultivators ─── */
+    { "Rogue Disciple",      "Fallen cultivators who turned to banditry after losing their path.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_NONE },
+    { "Dark Sect Member",    "Devotees of the forbidden Dark Sect, cultivating cursed qi.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Shadow Assassin",     "Silent killers trained in the art of shadow-step execution.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Demon Cultivator",    "Cultivators who consumed demonic cores, twisting their qi.", ENTITY_NPC_HOSTILE, ELEMENT_ICE, ELEMENT_FIRE },
+    { "Blood Sect Disciple", "Disciples who sacrificed their meridians for raw power.", ENTITY_NPC_HOSTILE, ELEMENT_WATER, ELEMENT_FIRE },
+    { "Bandit",              "Common criminals preying on lone cultivators.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_NONE },
+    { "Fallen Warrior",      "Once-proud warriors corrupted by greed and dark artifacts.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_EARTH },
+    { "Corrupt Elder",       "A sect elder whose long cultivation warped his mind.", ENTITY_NPC_HOSTILE, ELEMENT_SHADOW, ELEMENT_ICE },
+    { "Sect Traitor",        "A disciple who sold cultivation secrets to enemies.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_WIND },
+    { "Iron Fist Thug",      "Street brawlers trained in brutal unarmed combat.", ENTITY_NPC_HOSTILE, ELEMENT_WIND, ELEMENT_EARTH },
+    { "Cursed Swordsman",    "A blade cultivator bound to a cursed spirit sword.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Poison Needle User",  "Masters of hidden weapons coated in spirit venom.", ENTITY_NPC_HOSTILE, ELEMENT_FIRE, ELEMENT_ICE },
+    { "Demonic Archer",      "Long-range cultivators who fire qi-infused arrows.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_WIND },
+    { "Blood Moon Cultist",  "Fanatics who worship the Blood Moon and seek chaos.", ENTITY_NPC_HOSTILE, ELEMENT_WATER, ELEMENT_SHADOW },
+    { "Grave Robber",        "Thieves who plunder ancient tombs for artifacts.", ENTITY_NPC_HOSTILE, ELEMENT_LIGHTNING, ELEMENT_EARTH },
+    /* ── Beasts ─── */
+    { "Spirit Wolf",         "Wolves infused with ancient forest qi, eyes glow silver.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_WIND },
+    { "Iron Boar",           "Mountain boars whose hides have calcified to iron.", ENTITY_BEAST, ELEMENT_LIGHTNING, ELEMENT_EARTH },
+    { "Flame Fox",           "Foxes that have absorbed volcanic qi and breathe embers.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_FIRE },
+    { "Jade Serpent",        "Venomous serpents whose scales glow with jade meridians.", ENTITY_BEAST, ELEMENT_ICE, ELEMENT_EARTH },
+    { "Thunder Hawk",        "Eagles that nest in storm clouds and strike with lightning.", ENTITY_BEAST, ELEMENT_EARTH, ELEMENT_LIGHTNING },
+    { "Stone Bear",          "Ancient bears whose fur has crystallized into stone armor.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_EARTH },
+    { "Shadow Cat",          "Felines that phase between light and shadow at will.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Wind Tiger",          "Tigers that move at gale speed, leaving afterimages.", ENTITY_BEAST, ELEMENT_EARTH, ELEMENT_WIND },
+    { "Frost Deer",          "Deer from frozen peaks whose breath turns air to ice.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_ICE },
+    { "Lava Salamander",     "Amphibians born in lava vents with molten-rock skin.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_FIRE },
+    { "Storm Crane",         "Sacred cranes that control weather and heal nearby beasts.", ENTITY_BEAST, ELEMENT_EARTH, ELEMENT_LIGHTNING },
+    { "Tide Dragon",         "Young dragon-kin that command water currents.", ENTITY_BEAST, ELEMENT_LIGHTNING, ELEMENT_WATER },
+    { "Void Spider",         "Spiders that weave webs of shadow qi to trap prey.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Mud Tortoise",        "Massive tortoises with qi-hardened shells.", ENTITY_BEAST, ELEMENT_LIGHTNING, ELEMENT_EARTH },
+    { "Celestial Deer",      "Rare deer whose antlers channel heaven's qi.", ENTITY_BEAST, ELEMENT_SHADOW, ELEMENT_WIND },
+    { "Blood Bat",           "Bats that drink cultivator qi instead of blood.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Glacier Bear",        "Polar bears that hibernate inside glaciers for centuries.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_ICE },
+    { "Phantom Snake",       "Translucent serpents invisible to normal sight.", ENTITY_BEAST, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Earth Rhino",         "Rhinoceroses whose horns can shatter stone mountains.", ENTITY_BEAST, ELEMENT_WIND, ELEMENT_EARTH },
+    { "Heaven Butterfly",    "Butterflies whose wing dust induces cultivation visions.", ENTITY_BEAST, ELEMENT_SHADOW, ELEMENT_WIND },
+    { "Magma Scorpion",      "Desert scorpions with stingers dripping with magma.", ENTITY_BEAST, ELEMENT_WATER, ELEMENT_FIRE },
+    /* ── Bosses / Dungeon ─── */
+    { "Gate Guardian",       "A powerful construct that guards dungeon gates.", ENTITY_DUNGEON_BOSS, ELEMENT_SHADOW, ELEMENT_EARTH },
+    { "Dungeon Creature",    "A twisted beast warped by the gate's dimensional energy.", ENTITY_DUNGEON_MONSTER, ELEMENT_FIRE, ELEMENT_NONE },
+    { "Sect Elder Guardian", "An ancient protector of a collapsed sect's final hall.", ENTITY_BOSS, ELEMENT_LIGHTNING, ELEMENT_ICE },
+    { "Dragon Corpse King",  "The undead remains of a thousand-year dragon.", ENTITY_BOSS, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Heavenly Tribulation Beast","A beast descended from tribulation lightning clouds.", ENTITY_BOSS, ELEMENT_EARTH, ELEMENT_LIGHTNING },
+    { "Blood Moon Apostle",  "The chosen avatar of the Blood Moon cult's god.", ENTITY_BOSS, ELEMENT_SHADOW, ELEMENT_WATER },
+    { "Demon King's Shade",  "A shadow left by the Demon King after his sealing.", ENTITY_BOSS, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Ancient Stone Golem", "A golem left behind by a long-dead formation master.", ENTITY_BOSS, ELEMENT_LIGHTNING, ELEMENT_EARTH },
+    { "Void Devourer",       "An entity that consumes dimensional rifts to grow.", ENTITY_BOSS, ELEMENT_FIRE, ELEMENT_SHADOW },
+    { "Nine-Tailed Revenant","The spirit of a thousand-year fox that seeks vengeance.", ENTITY_BOSS, ELEMENT_FIRE, ELEMENT_WIND },
 };
 #define NUM_TEMPLATES (int)(sizeof(BESTIARY_TEMPLATES)/sizeof(BESTIARY_TEMPLATES[0]))
 
