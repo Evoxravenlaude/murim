@@ -421,9 +421,19 @@ static void player_update(float dt) {
     else system_notify(&game, NOTIFY_WARNING, "[ Taming ]", "No beast in range!");
   }
 
-  /* ARISE shadow extraction — F key */
+  /* ARISE shadow extraction — F key (only when ARISE prompt is active) */
   if (IsKeyPressed(KEY_F)) {
     taming_do_arise(&game);
+  }
+
+  /* Beast roster menu — T key */
+  if (IsKeyPressed(KEY_T)) {
+    game.state = STATE_BEAST_MENU;
+  }
+
+  /* Shadow army menu — Y key */
+  if (IsKeyPressed(KEY_Y)) {
+    game.state = STATE_SHADOW_MENU;
   }
 
   /* Use item — X key */
@@ -685,11 +695,19 @@ static void game_update(float dt) {
         int tx = (int)(fp->pos.x / TILE_SIZE);
         int ty = (int)(fp->pos.y / TILE_SIZE);
         int vr = game.fog->vision_range;
+
+        /* Clear visibility each frame (explored persists) */
+        memset(game.fog->visible, 0, sizeof(game.fog->visible));
+
         for (int dy2 = -vr; dy2 <= vr; dy2++)
             for (int dx2 = -vr; dx2 <= vr; dx2++) {
+                /* Circular vision range */
+                if (dx2*dx2 + dy2*dy2 > vr*vr) continue;
                 int ex = tx+dx2, ey = ty+dy2;
-                if (ex>=0&&ex<WORLD_TILES_X&&ey>=0&&ey<WORLD_TILES_Y)
+                if (ex>=0&&ex<WORLD_TILES_X&&ey>=0&&ey<WORLD_TILES_Y) {
                     game.fog->explored[ey][ex] = true;
+                    game.fog->visible[ey][ex]  = true;
+                }
             }
     }
 
@@ -792,6 +810,43 @@ static void game_update(float dt) {
 
   case STATE_STANDOFF:
     standoff_update(&game, dt);
+    if (IsKeyPressed(KEY_SPACE)) standoff_player_strike(&game);
+    particles_update(&game, dt);
+    system_ui_update(&game, dt);
+    break;
+
+  case STATE_BEAST_MENU:
+    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_T))
+      game.state = STATE_PLAYING;
+    /* Deploy beast with number keys */
+    for (int i = 0; i < 8; i++) {
+      if (IsKeyPressed(KEY_ONE + i))
+        taming_deploy_beast(&game, i);
+    }
+    break;
+
+  case STATE_SHADOW_MENU:
+    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_Y))
+      game.state = STATE_PLAYING;
+    /* Deploy shadow with number keys */
+    for (int i = 0; i < 8; i++) {
+      if (IsKeyPressed(KEY_ONE + i)) {
+        if (i < MAX_SHADOWS && game.shadows[i].active && !game.shadows[i].is_deployed) {
+          Entity *player = &game.entities[game.player_id];
+          float ang = ((float)(rand()%360)) * DEG2RAD;
+          Vec2 pos = { player->pos.x + cosf(ang)*60.0f, player->pos.y + sinf(ang)*60.0f };
+          int eid = npc_spawn(&game, ENTITY_SHADOW_SOLDIER, pos, game.shadows[i].name);
+          if (eid >= 0) {
+            game.entities[eid].stats = game.shadows[i].stats;
+            game.entities[eid].color = game.shadows[i].color;
+            game.entities[eid].ai_state = AI_SHADOW_COMMAND;
+            game.shadows[i].is_deployed = true;
+            game.shadows[i].entity_id = eid;
+            system_notify(&game, NOTIFY_SHADOW, "[ Shadow Deployed ]", game.shadows[i].name);
+          }
+        }
+      }
+    }
     break;
 
   case STATE_DUNGEON:
@@ -1095,9 +1150,9 @@ static void game_draw(void) {
     BeginMode2D(game.camera);
     renderer_draw_world(&game);
     renderer_draw_entities(&game);
-    fishing_draw(&game); /* world-space bobber */
+    fishing_draw(&game); /* bobber + HUD (handles world & screen) */
     EndMode2D();
-    fishing_draw(&game); /* screen-space HUD — fishing_draw handles both */
+    hud_draw(&game);
     system_ui_draw_notifications(&game);
     break;
 

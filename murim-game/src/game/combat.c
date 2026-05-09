@@ -163,7 +163,7 @@ void combat_apply_damage(Game *game, Entity *attacker, Entity *defender)
     if (damage < 1) damage = 1;
 
     /* Critical hit chance */
-    bool crit = (rand() % 100 < 5 + attacker->cultivation.realm * 3);
+    bool crit = (rand() % 100 < (int)(5 + attacker->cultivation.realm * 3));
     if (crit && !is_execution) damage *= 2;
 
     /* Stance damage bonus */
@@ -226,11 +226,19 @@ void combat_apply_damage(Game *game, Entity *attacker, Entity *defender)
                 if (!ld->active) {
                     ld->active   = true;
                     ld->pos      = defender->pos;
-                    ld->item     = (rand()%3==0) ? ITEM_HEALING_PILL : ITEM_SPIRIT_STONE;
                     ld->rarity   = (ItemRarity)(rand() % 3);
                     ld->quantity = 1 + rand() % 2;
                     ld->timer    = 30.0f;
                     ld->bob_timer = 0;
+                    /* Type-specific drops */
+                    if (defender->type == ENTITY_BEAST) {
+                        ld->item = (rand()%2==0) ? ITEM_MEAT : ITEM_PELT;
+                    } else if (defender->type == ENTITY_BOSS || defender->type == ENTITY_DUNGEON_BOSS) {
+                        ld->item = (rand()%3==0) ? ITEM_ANCIENT_SCROLL : ITEM_SPIRIT_STONE;
+                        ld->rarity = (ItemRarity)(RARITY_RARE + rand() % 3);
+                    } else {
+                        ld->item = (rand()%3==0) ? ITEM_HEALING_PILL : ITEM_SPIRIT_STONE;
+                    }
                     break;
                 }
             }

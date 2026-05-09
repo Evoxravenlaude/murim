@@ -362,6 +362,8 @@ CMakeFiles/murim_game.dir/src/game/alchemy.c.o
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/ui/system_ui.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/alchemy.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/world.h
  /usr/local/Cellar/raylib/5.5/include/raylib.h
 
@@ -444,6 +446,7 @@ CMakeFiles/murim_game.dir/src/game/audio_sys.c.o
  /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/include/stdint.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/world.h
  /usr/local/Cellar/raylib/5.5/include/raylib.h
 
 CMakeFiles/murim_game.dir/src/game/bestiary.c.o
@@ -675,10 +678,12 @@ CMakeFiles/murim_game.dir/src/game/combat.c.o
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/ui/system_ui.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/bestiary.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/bounty.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/combat.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/elements.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h
  /usr/local/Cellar/raylib/5.5/include/raylib.h
 
 CMakeFiles/murim_game.dir/src/game/cultivation.c.o
@@ -1168,7 +1173,9 @@ CMakeFiles/murim_game.dir/src/game/fishing.c.o
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/ui/system_ui.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/alchemy.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/fishing.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/world.h
  /usr/local/Cellar/raylib/5.5/include/raylib.h
 
@@ -1694,8 +1701,10 @@ CMakeFiles/murim_game.dir/src/game/taming.c.o
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/engine/types.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/ui/system_ui.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/combat.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/npc.h
+ /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h
  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/taming.h
  /usr/local/Cellar/raylib/5.5/include/raylib.h
 

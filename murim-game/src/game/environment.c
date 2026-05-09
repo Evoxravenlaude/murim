@@ -68,6 +68,17 @@ void environment_eat(Game *game)
     /* Find meat/food in inventory */
     for (int i = 0; i < MAX_ITEMS; i++) {
         InventorySlot *slot = &player->inventory[i];
+        if (slot->type == ITEM_MEAT && slot->quantity > 0) {
+            player->stats.hunger += 50.0f;
+            if (player->stats.hunger > 100.0f) player->stats.hunger = 100.0f;
+            slot->quantity--;
+            if (slot->quantity <= 0) { slot->type = ITEM_NONE; player->num_items--; }
+            system_notify(game, NOTIFY_INFO, "[ Survival ]", "Ate meat: +50 Hunger");
+            return;
+        }
+    }
+    for (int i = 0; i < MAX_ITEMS; i++) {
+        InventorySlot *slot = &player->inventory[i];
         if (slot->type == ITEM_HERB && slot->quantity > 0) {
             player->stats.hunger += 30.0f;
             player->stats.thirst += 10.0f;

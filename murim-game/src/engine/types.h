@@ -228,6 +228,10 @@ typedef enum {
     ITEM_ARMOR_PLATE,
     ITEM_ACCESSORY_RING,
     ITEM_ACCESSORY_AMULET,
+    /* v3.0 hunting items */
+    ITEM_MEAT,
+    ITEM_PELT,
+    ITEM_ANCIENT_SCROLL,
     ITEM_COUNT
 } ItemType;
 

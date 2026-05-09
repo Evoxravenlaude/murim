@@ -193,6 +193,19 @@ void renderer_draw_world(const Game *game)
 
             /* Draw tile decorations */
             draw_tile_decoration(type, px, py, game->game_time);
+
+            /* Fog of War overlay */
+            if (game->fog) {
+                if (tx >= 0 && tx < WORLD_TILES_X && ty >= 0 && ty < WORLD_TILES_Y) {
+                    if (!game->fog->explored[ty][tx]) {
+                        /* Unexplored: full black */
+                        DrawRectangle(px, py, TILE_SIZE, TILE_SIZE, (Color){5, 5, 10, 240});
+                    } else if (!game->fog->visible[ty][tx]) {
+                        /* Explored but not currently visible: dimmed */
+                        DrawRectangle(px, py, TILE_SIZE, TILE_SIZE, (Color){10, 10, 20, 140});
+                    }
+                }
+            }
         }
     }
 }

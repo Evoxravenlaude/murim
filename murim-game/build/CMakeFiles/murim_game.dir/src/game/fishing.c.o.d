@@ -32,6 +32,8 @@ CMakeFiles/murim_game.dir/src/game/fishing.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/audio_sys.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/world.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/alchemy.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/../ui/system_ui.h \

@@ -53,9 +53,35 @@ void weather_update(Game *game, float dt)
         else weather_set(w, WEATHER_FOG);
     }
 
-    /* Wind updates (slowly shifts) */
-    float target_wind_angle = ws->wind_angle + (float)((rand() % 100) - 50) / 100.0f;
-    ws->wind_angle += (target_wind_angle - ws->wind_angle) * dt * 0.1f;
+    /* Wind updates — Guiding Wind (§3 GDD) */
+    /* Blend natural drift with direction toward nearest quest objective / gate */
+    float natural_drift = ws->wind_angle + (float)((rand() % 100) - 50) / 100.0f;
+    float guide_angle = natural_drift; /* default: drift naturally */
+    {
+        const Entity *p = &game->entities[game->player_id];
+        float best_dist = 999999.0f;
+        bool found = false;
+
+        /* Point toward nearest active dungeon gate */
+        for (int i = 0; i < MAX_GATES; i++) {
+            const DungeonGate *g = &game->gates[i];
+            if (!g->active || g->is_cleared) continue;
+            float dx = g->world_pos.x - p->pos.x;
+            float dy = g->world_pos.y - p->pos.y;
+            float d = dx*dx + dy*dy;
+            if (d < best_dist) { best_dist = d; guide_angle = atan2f(dy, dx); found = true; }
+        }
+        /* Mix: 70% guide, 30% natural when objective exists */
+        if (found) {
+            /* Normalize angle difference */
+            float diff = guide_angle - ws->wind_angle;
+            while (diff > 3.14159f) diff -= 6.28318f;
+            while (diff < -3.14159f) diff += 6.28318f;
+            ws->wind_angle += diff * dt * 0.3f; /* Gentle steer toward objective */
+        } else {
+            ws->wind_angle += (natural_drift - ws->wind_angle) * dt * 0.1f;
+        }
+    }
     
     float target_wind_str = 0.2f;
     if (ws->current == WEATHER_STORM || ws->target == WEATHER_STORM) target_wind_str = 0.8f;
