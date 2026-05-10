@@ -41,3 +41,50 @@ jobs:
           murim-game/build/bin/
           murim-game/build/Release/
         retention-days: 7
+
+  build-web:
+    name: Build WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Emscripten
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 3.1.44
+
+    - name: Configure CMake
+      working-directory: ./murim-game
+      run: emcmake cmake -B build_web -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      working-directory: ./murim-game
+      run: emmake cmake --build build_web --config Release
+
+    - name: Prepare Pages Artifact
+      working-directory: ./murim-game
+      run: |
+        mkdir -p web_dist
+        cp build_web/bin/murim_game.html web_dist/index.html
+        cp build_web/bin/murim_game.js web_dist/
+        cp build_web/bin/murim_game.wasm web_dist/
+
+    - name: Upload Pages Artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: murim-game/web_dist
+
+  deploy-web:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build-web
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
