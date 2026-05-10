@@ -15,7 +15,7 @@ if(NOT RAYLIB_FOUND)
     include(FetchContent)
     FetchContent_Declare(
       raylib
-      URL https://github.com/raysan5/raylib/archive/refs/tags/5.0.tar.gz
+      URL https://github.com/raysan5/raylib/archive/refs/tags/5.5.tar.gz
     )
     FetchContent_MakeAvailable(raylib)
     set(RAYLIB_INCLUDE_DIRS ${raylib_SOURCE_DIR}/src)
@@ -87,7 +87,11 @@ set_target_properties(murim_game PROPERTIES
 )
 
 # Compiler warnings
-target_compile_options(murim_game PRIVATE -Wall -Wextra -Wpedantic)
+if(MSVC)
+    target_compile_options(murim_game PRIVATE /W4)
+else()
+    target_compile_options(murim_game PRIVATE -Wall -Wextra -Wpedantic)
+endif()
 
 message(STATUS "Raylib include: ${RAYLIB_INCLUDE_DIRS}")
 message(STATUS "Raylib libs: ${RAYLIB_LIBRARIES}")
