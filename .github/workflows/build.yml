@@ -1,0 +1,43 @@
+name: Build Murim Chronicles
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev pkg-config
+
+    - name: Configure CMake
+      working-directory: ./murim-game
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      working-directory: ./murim-game
+      run: cmake --build build --config Release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: MurimGame-${{ runner.os }}
+        path: |
+          murim-game/build/bin/
+          murim-game/build/Release/
+        retention-days: 7
