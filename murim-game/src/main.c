@@ -10,6 +10,8 @@
  *   Q               — Use Qi Technique
  *   E               — Cultivate / Interact
  *   TAB             — Stats Screen
+ *   I               — Inventory
+ *   K               — Skill Tree
  *   1-5             — Switch Technique
  *   ESC             — Pause
  *   F3              — Debug Info
@@ -160,6 +162,7 @@ static void game_init(void) {
   events_init(&game);
   reputation_init(&game);
     quests_init(&game);
+    game.has_shadow_power = true;  /* Player starts with ARISE ability */
     elements_init_entity(&game.entities[game.player_id], ELEMENT_SHADOW);
 
     /* Give some enemies elemental affinities */
@@ -615,6 +618,18 @@ static void game_update(float dt) {
       break;
     }
 
+    /* Inventory — I key */
+    if (IsKeyPressed(KEY_I)) {
+      game.state = STATE_INVENTORY;
+      break;
+    }
+
+    /* Skill Tree — K key */
+    if (IsKeyPressed(KEY_K)) {
+      game.state = STATE_SKILL_TREE;
+      break;
+    }
+
     /* Combat Stance switch (R cycles stances) */
     if (IsKeyPressed(KEY_R) && game.state != STATE_PAUSED) {
       Entity *p = &game.entities[game.player_id];
@@ -806,6 +821,19 @@ static void game_update(float dt) {
         alchemy_craft(&game, i);
       }
     }
+    break;
+
+  case STATE_INVENTORY:
+    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_I))
+      game.state = STATE_PLAYING;
+    /* Use item with number keys */
+    if (IsKeyPressed(KEY_X))
+      combat_use_item(&game);
+    break;
+
+  case STATE_SKILL_TREE:
+    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_K))
+      game.state = STATE_PLAYING;
     break;
 
   case STATE_STANDOFF:
@@ -1123,6 +1151,107 @@ static void game_draw(void) {
     EndMode2D();
     alchemy_draw_menu(&game);
     break;
+
+  case STATE_INVENTORY: {
+    BeginMode2D(game.camera);
+    renderer_draw_world(&game);
+    renderer_draw_entities(&game);
+    EndMode2D();
+    /* Inventory panel */
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 180});
+    int ipw = 600, iph = 440;
+    int ipx = SCREEN_WIDTH/2 - ipw/2, ipy = SCREEN_HEIGHT/2 - iph/2;
+    system_ui_draw_panel(ipx, ipy, ipw, iph, 1.0f);
+    DrawText("[ INVENTORY ]", ipx + 30, ipy + 20, 22, (Color){220,240,255,255});
+    DrawLine(ipx + 30, ipy + 50, ipx + ipw - 30, ipy + 50, (Color){60,120,255,200});
+    const Entity *inv_p = &game.entities[game.player_id];
+    int iy = ipy + 65;
+    int shown_items = 0;
+    for (int i = 0; i < MAX_ITEMS; i++) {
+      const InventorySlot *sl = &inv_p->inventory[i];
+      if (sl->type == ITEM_NONE || sl->quantity <= 0) continue;
+      Color ic = (Color){200,200,200,255};
+      if (sl->rarity == RARITY_RARE)   ic = (Color){80,180,255,255};
+      if (sl->rarity == RARITY_EPIC)   ic = (Color){200,80,255,255};
+      if (sl->rarity == RARITY_MYTHIC) ic = (Color){255,215,0,255};
+      char ibuf[128];
+      snprintf(ibuf, sizeof(ibuf), "%-20s  x%d   (%s)",
+               sl->name ? sl->name : "Item", sl->quantity, rarity_name(sl->rarity));
+      DrawText(ibuf, ipx + 40, iy, 14, ic);
+      iy += 24;
+      shown_items++;
+    }
+    if (!shown_items)
+      DrawText("Your inventory is empty.", ipx + 40, iy, 14, (Color){120,120,120,255});
+    char goldbuf[48];
+    snprintf(goldbuf, sizeof(goldbuf), "Gold: %d G", inv_p->gold);
+    DrawText(goldbuf, ipx + 40, ipy + iph - 60, 16, (Color){255,215,0,255});
+    DrawText("[X] Use Item  |  [ESC] Close", ipx + ipw/2 - 100, ipy + iph - 30, 12, (Color){100,180,255,200});
+    system_ui_draw_notifications(&game);
+    break;
+  }
+
+  case STATE_SKILL_TREE: {
+    BeginMode2D(game.camera);
+    renderer_draw_world(&game);
+    renderer_draw_entities(&game);
+    EndMode2D();
+    /* Skill tree panel */
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, (Color){0, 0, 0, 180});
+    int spw = 700, sph = 500;
+    int spx = SCREEN_WIDTH/2 - spw/2, spy = SCREEN_HEIGHT/2 - sph/2;
+    system_ui_draw_panel(spx, spy, spw, sph, 1.0f);
+    DrawText("[ SKILL TREE ]", spx + 30, spy + 20, 22, (Color){220,240,255,255});
+    DrawLine(spx + 30, spy + 50, spx + spw - 30, spy + 50, (Color){60,120,255,200});
+    const Entity *sk_p = &game.entities[game.player_id];
+    int sy2 = spy + 70;
+    /* Combat Skills */
+    DrawText("■ COMBAT ARTS", spx + 40, sy2, 18, (Color){255,120,120,255}); sy2 += 30;
+    char sbuf[128];
+    snprintf(sbuf, sizeof(sbuf), "Sword Mastery: %.1f", sk_p->stats.sword_mastery);
+    DrawText(sbuf, spx + 60, sy2, 14, (Color){200,200,200,255});
+    float sm_ratio = sk_p->stats.sword_mastery / 10.0f;
+    DrawRectangle(spx + 280, sy2, 150, 10, (Color){30,30,30,200});
+    DrawRectangle(spx + 280, sy2, (int)(150 * sm_ratio), 10, (Color){255,120,120,220});
+    sy2 += 26;
+    snprintf(sbuf, sizeof(sbuf), "Fist Mastery:  %.1f", sk_p->stats.fist_mastery);
+    DrawText(sbuf, spx + 60, sy2, 14, (Color){200,200,200,255});
+    float fm_ratio = sk_p->stats.fist_mastery / 10.0f;
+    DrawRectangle(spx + 280, sy2, 150, 10, (Color){30,30,30,200});
+    DrawRectangle(spx + 280, sy2, (int)(150 * fm_ratio), 10, (Color){255,180,80,220});
+    sy2 += 26;
+    snprintf(sbuf, sizeof(sbuf), "Iron Body:     %.1f", sk_p->iron_body_mastery);
+    DrawText(sbuf, spx + 60, sy2, 14, (Color){200,200,200,255});
+    float ib_ratio = sk_p->iron_body_mastery / 10.0f;
+    DrawRectangle(spx + 280, sy2, 150, 10, (Color){30,30,30,200});
+    DrawRectangle(spx + 280, sy2, (int)(150 * ib_ratio), 10, (Color){120,200,255,220});
+    sy2 += 36;
+    /* Physical Skills */
+    DrawText("■ PHYSICAL ARTS", spx + 40, sy2, 18, (Color){120,255,120,255}); sy2 += 30;
+    snprintf(sbuf, sizeof(sbuf), "Athletics:     %.1f", sk_p->stats.athletics);
+    DrawText(sbuf, spx + 60, sy2, 14, (Color){200,200,200,255});
+    float at_ratio = sk_p->stats.athletics / 10.0f;
+    DrawRectangle(spx + 280, sy2, 150, 10, (Color){30,30,30,200});
+    DrawRectangle(spx + 280, sy2, (int)(150 * at_ratio), 10, (Color){120,255,120,220});
+    sy2 += 36;
+    /* Techniques */
+    DrawText("■ TECHNIQUES", spx + 40, sy2, 18, (Color){100,180,255,255}); sy2 += 30;
+    for (int ti = 0; ti < sk_p->num_techniques && ti < 5; ti++) {
+      const Technique *tech = &sk_p->techniques[ti];
+      Color tc2 = ti == sk_p->active_technique ? (Color){255,215,0,255} : (Color){180,180,200,255};
+      snprintf(sbuf, sizeof(sbuf), "[%d] %-18s  DMG:%d  QI:%d  CD:%.1fs",
+               ti+1, tech->name, tech->damage, tech->qi_cost, tech->cooldown);
+      DrawText(sbuf, spx + 60, sy2, 13, tc2);
+      sy2 += 22;
+    }
+    sy2 += 14;
+    /* Cultivation realm */
+    snprintf(sbuf, sizeof(sbuf), "Cultivation: %s", cultivation_realm_name(sk_p->cultivation.realm));
+    DrawText(sbuf, spx + 40, sy2, 16, (Color){200,150,255,255});
+    DrawText("[ESC] Close", spx + spw/2 - 30, spy + sph - 30, 12, (Color){100,180,255,200});
+    system_ui_draw_notifications(&game);
+    break;
+  }
 
   case STATE_STANDOFF:
     BeginMode2D(game.camera);

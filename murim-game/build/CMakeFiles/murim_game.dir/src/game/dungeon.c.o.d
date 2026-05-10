@@ -33,6 +33,7 @@ CMakeFiles/murim_game.dir/src/game/dungeon.c.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/npc.h \
+  /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/quests.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/../ui/system_ui.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/../ui/../engine/types.h \
   /Users/rav3n/.gemini/antigravity/scratch/murim-game/src/game/../engine/particles.h \

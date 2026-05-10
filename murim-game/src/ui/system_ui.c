@@ -323,9 +323,29 @@ void system_ui_draw_status_window(const Game *game)
     int lx = px + 40;
     int ly = py + 80;
     
-    /* Portrait placeholder */
+    /* Character portrait — hooded martial artist silhouette */
     system_ui_draw_glow_box(lx, ly, 150, 150, SYS_PANEL_BORDER, 0.5f);
-    DrawText("PLAYER", lx + 45, ly + 65, 16, SYS_TEXT_SECONDARY);
+    {
+        int cx = lx + 75, cy = ly + 40;
+        Color skin = (Color){180, 150, 120, 255};
+        Color cloak = (Color){40, 30, 60, 255};
+        Color glow = (Color){60, 120, 255, 80};
+        /* Hood / cloak body */
+        DrawTriangle((Vector2){cx - 35, cy + 90}, (Vector2){cx, cy - 10},
+                     (Vector2){cx + 35, cy + 90}, cloak);
+        DrawTriangle((Vector2){cx - 30, cy + 10}, (Vector2){cx, cy - 18},
+                     (Vector2){cx + 30, cy + 10}, (Color){50, 40, 70, 255});
+        /* Face */
+        DrawCircle(cx, cy + 10, 18, skin);
+        /* Eyes — glowing blue */
+        DrawCircle(cx - 7, cy + 8, 3, (Color){60, 160, 255, 255});
+        DrawCircle(cx + 7, cy + 8, 3, (Color){60, 160, 255, 255});
+        DrawCircle(cx - 7, cy + 8, 1.5f, WHITE);
+        DrawCircle(cx + 7, cy + 8, 1.5f, WHITE);
+        /* Qi aura glow */
+        DrawCircleLines(cx, cy + 30, 50, glow);
+        DrawCircleLines(cx, cy + 30, 55, (Color){40, 80, 200, 40});
+    }
     
     ly += 170;
     char buf[128];

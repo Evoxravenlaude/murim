@@ -116,6 +116,7 @@ bool taming_try_capture(Game *game, int entity_id)
 
     camera_shake(game, 5.0f, 0.3f);
     system_notify(game, NOTIFY_SUCCESS, "[ Tamed! ]", tb->name);
+    quests_on_tame(game);
     return true;
 }
 

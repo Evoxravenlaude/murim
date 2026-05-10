@@ -4,6 +4,7 @@
  */
 #include "dungeon.h"
 #include "npc.h"
+#include "quests.h"
 #include "../ui/system_ui.h"
 #include "../engine/particles.h"
 #include "../engine/camera.h"
@@ -122,6 +123,7 @@ void dungeon_update(Game *game, float dt)
             player->dungeons_cleared++; game->total_dungeons++;
             char buf[64]; snprintf(buf,sizeof(buf),"+%d EXP  +%d Gold",GATE_EXP_REWARD[g->rank],GATE_GOLD_REWARD[g->rank]);
             system_notify(game,NOTIFY_SUCCESS,"[ DUNGEON CLEARED ]",buf);
+            quests_on_dungeon_clear(game);
             dungeon_exit(game); g->active=false;
         }
     }
@@ -216,6 +218,7 @@ void dungeon_enter(Game *game, int gate_idx)
     game->active_dungeon=gate_idx; game->state=STATE_DUNGEON;
     system_notify(game,NOTIFY_SYSTEM,"[ DUNGEON ENTERED ]",gate_rank_name(g->rank));
     particle_burst(game,player->pos,gate_color(g->rank),30,150.0f,1.0f,5.0f);
+    quests_on_dungeon_enter(game);
 }
 
 void dungeon_exit(Game *game)
