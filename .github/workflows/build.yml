@@ -55,7 +55,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ./murim-game
-      run: emcmake cmake -B build_web -DCMAKE_BUILD_TYPE=Release
+      run: emcmake cmake -B build_web -DCMAKE_BUILD_TYPE=Release -DPLATFORM=Web
 
     - name: Build
       working-directory: ./murim-game
