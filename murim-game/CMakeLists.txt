@@ -4,9 +4,24 @@ project(MurimGame C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Find raylib
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(RAYLIB REQUIRED raylib)
+# Find raylib via pkg-config first
+find_package(PkgConfig)
+if(PKG_CONFIG_FOUND)
+    pkg_check_modules(RAYLIB raylib)
+endif()
+
+if(NOT RAYLIB_FOUND)
+    message(STATUS "Raylib not found via pkg-config. Using FetchContent to download and build raylib.")
+    include(FetchContent)
+    FetchContent_Declare(
+      raylib
+      URL https://github.com/raysan5/raylib/archive/refs/tags/5.0.tar.gz
+    )
+    FetchContent_MakeAvailable(raylib)
+    set(RAYLIB_INCLUDE_DIRS ${raylib_SOURCE_DIR}/src)
+    set(RAYLIB_LIBRARIES raylib)
+    set(RAYLIB_LDFLAGS_OTHER "")
+endif()
 
 # Source files
 set(SOURCES
