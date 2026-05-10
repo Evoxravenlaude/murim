@@ -47,6 +47,10 @@
 #include "ui/hud.h"
 #include "ui/system_ui.h"
 
+#if defined(PLATFORM_WEB)
+    #include <emscripten/emscripten.h>
+#endif
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1315,6 +1319,16 @@ static void game_draw(void) {
 /* ═══════════════════════════════════════════════════════ */
 /*                      MAIN                              */
 /* ═══════════════════════════════════════════════════════ */
+
+static void UpdateDrawFrame(void) {
+  float dt = GetFrameTime();
+  if (dt > 0.05f)
+    dt = 0.05f; /* cap delta time */
+
+  game_update(dt);
+  game_draw();
+}
+
 int main(void) {
   srand((unsigned int)time(NULL));
 
@@ -1324,14 +1338,13 @@ int main(void) {
 
   game_init();
 
+#if defined(PLATFORM_WEB)
+  emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
+#else
   while (!WindowShouldClose()) {
-    float dt = GetFrameTime();
-    if (dt > 0.05f)
-      dt = 0.05f; /* cap delta time */
-
-    game_update(dt);
-    game_draw();
+    UpdateDrawFrame();
   }
+#endif
 
   renderer_cleanup();
   audio_cleanup();

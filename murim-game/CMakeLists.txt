@@ -86,6 +86,11 @@ set_target_properties(murim_game PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
+if (EMSCRIPTEN)
+    set_target_properties(murim_game PROPERTIES SUFFIX ".html")
+    target_link_options(murim_game PRIVATE -s USE_GLFW=3 -s ASYNCIFY -s FORCE_FILESYSTEM=1 -s TOTAL_MEMORY=67108864)
+endif()
+
 # Compiler warnings
 if(MSVC)
     target_compile_options(murim_game PRIVATE /W4)
