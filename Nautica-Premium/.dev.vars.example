@@ -1,0 +1,5 @@
+# Copy this to .dev.vars (gitignored) for local wrangler dev
+# Then run: wrangler secret put ALCHEMY_KEY
+#           wrangler secret put ZERO_X_KEY
+ALCHEMY_KEY=your_alchemy_key_here
+ZERO_X_KEY=your_0x_key_here
